@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/imgareaselect-default.css")
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        @@font-face {
+  font-family: dfg;
+  font-weight: bold;
+  src: url('/Content/ＤＦＧ麗雅宋.ttc') format('ttc');
+}
+        @@font-face {
+  font-family: "ＭＳ Ｐゴシック";
+  src: local("Meiryo");
+}
+        .new-card-placeholder {
+            background: rgba(0,0,0,0.2);
+            position: relative;
+            width: 400px;
+            height: 560px;
+        }
+            .new-card-placeholder > .new-img {
+                width: 400px;
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 0;
+            }
+            .new-card-placeholder > .img-border {
+                width: 400px;
+                height: 560px;
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 1;
+            }
+        .origin-upload-area{
+
+        }
+        .main-editor-area {
+            margin-bottom: 30px;
+            display: flex;
+        }
+        .text_line_area {
+            position: absolute;
+            bottom: 13%;
+            width: 90%;
+            left: 25px;
+            font-family: ＭＳ Ｐゴシック;
+            font-size: 10px;
+            z-index: 0;
+        }
+        .text_effect_area, .text_title_area {
+            position: absolute;
+            bottom: 24%;
+            z-index: 0;
+        }
+        .text_effect_area {
+            font-family: ＭＳ Ｐゴシック;
+            font-size: 12px;
+            line-height: 13px;
+            width: 90%;
+            border-radius: 4px;
+            padding: 5px;
+            background-color: rgba(255,255,255,0.5);
+            left: 25px;
+            bottom: 24%;
+        }
+        .text_title_area {
+            background: linear-gradient(rgba(255,255,255,0.3),rgba(255,255,255,0.9));
+            line-height: 18px;
+            width: 95%;
+            height: 118px;
+            font-weight: bold;
+            font-size: 18px;
+            left: 15px;
+            bottom: 3%;
+        }
+            .text_title_area .text-title {
+                width: 65%;
+                margin: 50px auto 0px auto;
+                font-family: dfg;
+            }
+            .export-area {
+                display: none;
+            }
+        .w100 {
+            width: 100px;
+            margin: 0 auto
+        }
+        .text-area-editor{
+        }
+        .partner{
+            transform:translateY(-20%)
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/Scripts/jquery-3.3.1.min.js")
+    @Scripts.Render("~/Scripts/jquery.imgareaselect.min.js")
+    @Scripts.Render("~/Scripts/jquery.imgareaselect.min.js")
+    @Scripts.Render("~/Scripts/html2canvas.min.js")
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+    @RenderSection("scripts", required: false)
+    @RenderSection("vuejs", required: false)
+</body>
+</html>

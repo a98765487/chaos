@@ -1,0 +1,306 @@
+﻿
+<div class="origin-upload-area">
+    <div class="row origin-img my-4">
+        <div class="col-md-12 text-center">
+            <h2>原始圖片上傳：</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 d-flex justify-content-center">
+            <div class="my-4">
+                <input type="file" value="請上傳圖片" class="upload-img" id="upload-img" v-on:change="originImgUpload" />
+                <button class="btn" v-on:click="confirmOriginImg" v-show="cropimgIsConfirm">確認</button>
+            </div>
+        </div>
+        <div class="col-md-12 d-flex justify-content-center">
+            <div id="origin-img-placeholder">
+                <img :src="originImage.src" alt="origin img" v-show="originImage.src" id="origin-img" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row mt-4 main-editor-area">
+    <div class="col-md-12 text-center mb-4">
+        <span class="h2">預覽圖片</span>
+        <button v-on:click="goBack" class="btn">返回</button>
+    </div>
+    <div class="col-md-6 text-center">
+        <div class="d-flex justify-content-center">
+            <div id="new-card-placeholder" class="new-card-placeholder">
+                <img :src="currentType.borderSrc" alt="Image" class="img-border" />
+                <img :src="newImage.src" alt="new card" v-show="newImage.src" id="new-img" class="new-img" />
+                <div id="text_effect_area" class="text_effect_area text-left">
+                    <span v-html="textareaCompress">
+                    </span>
+                </div>
+                <div id="text_line_area" class="text_line_area text-center">
+                    <div class="text-line"><span>{{cardLine}}</span></div>
+                    <hr style="margin-top: 0;margin-bottom: 2rem;" />
+                </div>
+                <div id="text_title_area" class="text_title_area text-center">
+                    <div class="text-title"><span>{{cardTitle}}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="btn-group mb-2" role="group">
+            <button class="btn btn-outline-secondary" v-on:click="tabActive(1)" :class="{active:basicSettingHasShown}">基本設置</button>
+            <button class="btn btn-outline-secondary" v-on:click="tabActive(2)" :class="{active:effectSettingHasShown}">效果</button>
+            <button class="btn btn-outline-secondary" v-on:click="exportImg">輸出</button>
+        </div>
+        <div v-show="basicSettingHasShown">
+            <form>
+                <div class="form-group">
+                    <label for="card-type">卡片種類</label>
+                    <select class="form-control" id="card-type" v-model="cardType" v-on:change="changeCardType">
+                        <option>請選擇卡片種類</option>
+                        <option value="1">女角色</option>
+                        <option value="2">男角色</option>
+                        <option value="3">事件</option>
+                        <option value="4">裝備</option>
+                        <option value="5">額外</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="card-name">卡片名稱</label>
+                    <input type="text" class="form-control" id="card-name" v-model="cardTitle" aria-describedby="card-name" placeholder="請輸入卡片名稱">
+                </div>
+                <div class="form-group">
+                    <label for="card-line">卡片台詞</label>
+                    <input type="text" class="form-control" id="card-line" v-model="cardLine" aria-describedby="card-name" placeholder="請輸入台詞名稱">
+                </div>
+            </form>
+        </div>
+        <div v-show="effectSettingHasShown">
+            <form>
+                <div class="form-group">
+                    <label for="textbox-content">卡片效果</label>
+                    <div class="mb-2">
+                        <img src="/image/partner.png" alt="Alternate Text" v-on:click="insertIconInTextbox('partner')" />
+                        <img src="/image/auto.png" alt="Alternate Text"  v-on:click="insertIconInTextbox('auto')" />
+                        <img src="/image/battle.png" alt="Alternate Text" v-on:click="insertIconInTextbox('battle')" />
+                        <img src="/image/battleOK.png" alt="Alternate Text" v-on:click="insertIconInTextbox('battleOK')"/>
+                        <img src="/image/continue.png" alt="Alternate Text" v-on:click="insertIconInTextbox('continue')"/>
+                        <img src="/image/facedown.png" alt="Alternate Text" v-on:click="insertIconInTextbox('facedown')"/>
+                        <img src="/image/facedowneffect.png" alt="Alternate Text" v-on:click="insertIconInTextbox('facedowneffect')"/>
+                        <img src="/image/faceup.png" alt="Alternate Text" v-on:click="insertIconInTextbox('faceup')"/>
+                        <img src="/image/Friend.png" alt="Alternate Text" v-on:click="insertIconInTextbox('Friend')"/>
+                        <img src="/image/main.png" alt="Alternate Text" v-on:click="insertIconInTextbox('main')"/>
+                        <img src="/image/rest.png" alt="Alternate Text" v-on:click="insertIconInTextbox('rest')"/>
+                        <img src="/image/reverse.png" alt="Alternate Text" v-on:click="insertIconInTextbox('reverse')"/>
+                        <img src="/image/product.png" alt="Alternate Text" v-on:click="insertIconInTextbox('product')"/>
+                        <img src="/image/sameOS.png" alt="Alternate Text" v-on:click="insertIconInTextbox('sameOS')"/>
+                        <img src="/image/stand.png" alt="Alternate Text" v-on:click="insertIconInTextbox('stand')"/>
+                        <img src="/image/turn1.png" alt="Alternate Text" v-on:click="insertIconInTextbox('turn1')"/>
+                        <img src="/image/turn2.png" alt="Alternate Text" v-on:click="insertIconInTextbox('turn2')"/>
+                        <button class="btn btn-sm" v-on:click.prevent="insertIconInTextbox('blank')">換行</button>
+                    </div>
+                    <textarea class="form-control text-area-editor" v-model="textboxContent" rows="5" id="textbox-content"></textarea>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+    <div class="row mb-4 export-area">
+        <div class="col-md-12 d-flex flex-column text-center">
+            <h2>輸出：</h2>
+            <button type="button" v-on:click="exportImg" class="btn w100">輸出</button>
+        </div>
+    </div>
+    @section vuejs{
+        <script>
+            var app = new Vue({
+                el: '#app',
+                data: {
+                    uploadFile: "",
+                    cropimgIsConfirm: false,
+                    origionImgStatus: {},
+                    originImage: {
+                        src: ""
+                    },
+                    newImage: {
+                        src: ""
+                    },
+                    isActive: {
+                        
+                    },
+                    textboxContent: "【登場】〔カード２枚を引き、自分の手札１枚を控え室に置く〕[blank][partner]自分の“ミスリル”が登場した場合、自分のデッキの上から２枚までを見て[blank][Friend]、その中のカード１枚までをデッキの下に置き、残りのカードをデッキの上に好きな順番で置く。その後、カード１枚までを引き、ターン終了時まで、目標のキャラ１体は攻撃力が２上昇する。[blank]目標のキャラ１体は攻撃力が２上昇する。",
+                    basicSettingHasShown: true,
+                    effectSettingHasShown: false,
+                    //exportHasShown:false
+                    cardType: 1,
+                    female:{
+                        borderSrc: "/image/female.png"
+                    },
+                    male:{
+                        borderSrc: "/image/male.png"
+                    },
+                    event:{
+                        borderSrc: "/image/event.png"
+                    },
+                    set:{
+                        borderSrc: "/image/set.png"
+                    },
+                    extra:{
+                        borderSrc: "/image/extra.png"
+                    },
+                    currentType: {},
+                    cardTitle: "無敵軍人「風見 雄二」", 
+                    cardLine: "……すみません先輩…", 
+                },
+                computed: {
+                    textareaCompress: function () {
+                        return this.textboxContent
+                        //partner紅字fd藍字
+                        .replace(/(\[partner\].*?\[blank\])/g, "<span style=\"color:red\">$1</span>")
+                            .replace(/(\[Friend\].*?\[blank\])/g, "<span style=\"color:blue\">$1</span>")
+                        .replace(/\[blank\]/g, "<br>")
+                        .replace(/\[partner\]/g, "<span><img src=\"/image/partner.png\" class=\"partner\"/></span>")
+                        .replace(/\[auto\]/g, "<span><img src=\"/image/auto.png\" class=\"auto\"/></span>")
+                        .replace(/\[battle\]/g, "<span><img src=\"/image/battle.png\" class=\"battle\"/></span>")
+                        .replace(/\[battleOK\]/g, "<span><img src=\"/image/battleOK.png\" class=\"battleOK\"/></span>")
+                        .replace(/\[continue\]/g, "<span><img src=\"/image/continue.png\" class=\"continue\"/></span>")
+                        .replace(/\[facedown\]/g, "<span><img src=\"/image/facedown.png\" class=\"facedown\"/></span>")
+                        .replace(/\[facedowneffect\]/g, "<span><img src=\"/image/facedowneffect.png\" class=\"facedowneffect\"/></span>")
+                        .replace(/\[faceup\]/g, "<span><img src=\"/image/faceup.png\" class=\"faceup\"/></span>")
+                        .replace(/\[Friend\]/g, "<span><img src=\"/image/Friend.png\" class=\"Friend\"/></span>")
+                        .replace(/\[main\]/g, "<span><img src=\"/image/main.png\" class=\"main\"/></span>")
+                        .replace(/\[rest\]/g, "<span><img src=\"/image/rest.png\" class=\"rest\"/></span>")
+                        .replace(/\[reverse\]/g, "<span><img src=\"/image/reverse.png\" class=\"reverse\"/></span>")
+                        .replace(/\[product\]/g, "<span><img src=\"/image/product.png\" class=\"product\"/></span>")
+                        .replace(/\[sameOS\]/g, "<span><img src=\"/image/sameOS.png\" class=\"sameOS\"/></span>")
+                        .replace(/\[stand\]/g, "<span><img src=\"/image/stand.png\" class=\"stand\"/></span>")
+                        .replace(/\[turn1\]/g, "<span><img src=\"/image/turn1.png\" class=\"turn1\"/></span>")
+                        .replace(/\[turn2\]/g, "<span><img src=\"/image/turn2.png\" class=\"turn2\"/></span>")
+
+                    }
+                },
+                mounted: function () {
+                    $(".main-editor-area").hide()
+                    this.origionImgStatus = $("#origin-img").imgAreaSelect({
+                        aspectRatio: "5:7",
+                        handles: true,
+                        instance: true,
+                        minWidth: 400,
+                        minHeight: 560,
+                        onSelectEnd: function (img, selection) {
+                            if (selection.width > 0) {
+                                app.cropImg(selection.x1, selection.y1, selection.width, selection.height)
+                            }
+                        }
+                    });
+                    this.currentType = this.female
+                },
+                methods: {
+                    originImgUpload: function (e) {
+                        e.preventDefault()
+                        var _this = this
+                        var files = e.target.files || e.dataTransfer.files;
+                        if (!files.length)
+                            return;
+                        var formData = new FormData();
+                        formData.append('file', files[0]);
+                        axios.post('/home/UploadOriginImg',
+                            formData,
+                            {
+                                headers: {
+                                    'Content-Type': 'multipart/form-data'
+                                }
+                            }
+                        ).then(function (result) {
+                            console.log(result)
+                            _this.originImage.src = result.data.oriImgSrc
+                        })
+                            .catch(function (result) {
+                                console.log(result.data.messege);
+                            });
+                    },
+                    cropImg: function (x, y, width, height) {
+                        var _this = this
+                        var bodyFormData = new FormData();
+                        bodyFormData.set('Src', _this.originImage.src);
+                        bodyFormData.set('X', x);
+                        bodyFormData.set('Y', y);
+                        bodyFormData.set('Width', width);
+                        bodyFormData.set('Height', height);
+                        axios({
+                            url: '/home/CropImg',
+                            method: 'post',
+                            data: bodyFormData,
+                        }).then(function (result) {
+                            _this.cropimgIsConfirm = true
+                            _this.newImage.src = result.data.newImageSrc
+                        })
+                            .catch(function (result) {
+                                console.log(result.data.messege);
+                            });
+                    },
+                    confirmOriginImg: function () {
+                        var _this = this
+                        _this.origionImgStatus.setOptions({ hide: true });
+                        _this.origionImgStatus.update();
+                        $(".origin-upload-area").fadeOut()
+                        $(".main-editor-area").fadeIn()
+                    },
+                    goBack: function () {
+                        var _this = this
+                        _this.origionImgStatus.setOptions({ hide: false });
+                        _this.origionImgStatus.update();
+                        $(".origin-upload-area").fadeIn()
+                        $(".main-editor-area").fadeOut()
+                    },
+                    exportImg: function () {
+                        var _this = this
+                        html2canvas($("div#new-card-placeholder")[0]).then(function (canvas) {
+                            var a = document.createElement('a');
+                            a.href = canvas.toDataURL("image/jpeg").replace("image/jpeg", "image/octet-stream");
+                            a.download = 'export.jpg';
+                            a.click();
+                        });
+                    },
+                    tabActive: function (type) {
+                        this.basicSettingHasShown = false
+                        this.effectSettingHasShown = false
+                        this.exportHasShown = false
+                        switch (type) {
+                            case 1:
+                                this.basicSettingHasShown  = true
+                                break;
+                            case 2:
+                                this.effectSettingHasShown = true
+                                break;
+                            //case 3:
+                            //    this.exportHasShown = true
+                            //    break;
+                        }
+                    },
+                    changeCardType: function (type) {
+                        switch (this.cardType) {
+                            //女角色
+                            case "1":
+                                this.currentType = this.female
+                                break;
+                            case "2":
+                                this.currentType = this.male
+                                break;
+                            case "3":
+                                this.currentType = this.event
+                                break;
+                            case "4":
+                                this.currentType = this.set
+                                break;
+                            //case "5":
+                            //    this.currentType = this.extra
+                            //    break;
+                            default:
+                                break;
+                        }
+                    },
+                    insertIconInTextbox: function (iconName) {
+                        this.textboxContent = this.textboxContent + "[" + iconName + "]"
+                    }
+                }
+            })
+        </script>
+    }
