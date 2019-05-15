@@ -9,38 +9,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>chaos組牌器</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <style>
         * {
             /*border: 1px solid black*/
-            font-family:'微軟正黑體'
+            font-family: '微軟正黑體'
         }
 
         .img-preview img {
             width: 100%
         }
-        .card-list{
-            height:80vh;
-            overflow-y:scroll;
+
+        .card-list {
+            height: 80vh;
+            overflow-y: scroll;
         }
+
         .deck-area {
             position: relative;
             height: 70vh;
         }
+
         .main-area-card-img, .extra-area-card-img {
             width: 9%;
             display: inline-block;
         }
-        .main-area-card-img > img, .extra-area-card-img > img {
-            max-width: 100%
-        }
-        .extra-deck-area{
-            position:absolute;
-            bottom:10%;
+
+            .main-area-card-img > img, .extra-area-card-img > img {
+                max-width: 100%
+            }
+
+        .extra-deck-area {
+            width:100%;
+            position: absolute;
+            bottom: 10%;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" id="app">
         <div class="row">
             <div class="col-3">
                 <div class="img-preview pt-3">
@@ -64,16 +71,14 @@
                     <div class="form-group">
                         <label for="ddl-desk">選擇牌組：</label>
                         <select id="ddl-desk">
-                            <option value="deck1">牌組1</option>
-                            <option value="deck1">牌組2</option>
-                            <option value="deck1">牌組3</option>
+                            <option value="deck.name" v-for="deck in decks">{{deck.name}}</option>
                         </select>
                         <input type="button" value="刪除" class="btn btn-dark" />
                     </div>
                     <div class="form-group">
-                        <label for="txt-desk">新建牌組：</label>
-                        <input type="text" id="txt-desk"/>
-                        <input type="button" value="新增" class="btn btn-dark" />
+                        <label for="txt-deck">新建牌組：</label>
+                        <input type="text" id="txt-deck" v-model="txtDeckName"/>
+                        <input type="button" value="新增" class="btn btn-dark" v-on:click="createNewDeck" />
                         <input type="button" value="輸出" class="btn btn-dark" />
                         <input type="button" value="輸入" class="btn btn-dark" />
                     </div>
@@ -85,153 +90,6 @@
                             <div class="main-area-card-img">
                                 <img src="~/Images/2angel1.0/10002.jpg" alt="" />
                             </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10004.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10009.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10010.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10015.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10017.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10002.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10004.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10009.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10010.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10015.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10017.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10002.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10004.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10009.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10010.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10015.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10017.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10002.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10004.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10009.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10010.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10015.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10017.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10002.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10004.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10009.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10010.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10015.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10017.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
                         </div>
                     </div>
                     <div class="extra-deck-area">
@@ -239,33 +97,6 @@
                         <div>
                             <div class="extra-area-card-img">
                                 <img src="~/Images/2angel1.0/10002.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10004.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10009.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10010.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10015.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10017.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
-                            </div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10020.jpg" alt="" />
                             </div>
                         </div>
                     </div>
@@ -280,30 +111,6 @@
                         <div class="search-img mt-2 mr-2">
                             <img src="~/Images/2angel1.0/10002.jpg" alt="" class="img-fluid" />
                         </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10003.jpg" alt="" class="img-fluid" />
-                        </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10004.jpg" alt="" class="img-fluid" />
-                        </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10005.jpg" alt="" class="img-fluid" />
-                        </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10006.jpg" alt="" class="img-fluid" />
-                        </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10007.jpg" alt="" class="img-fluid" />
-                        </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10008.jpg" alt="" class="img-fluid" />
-                        </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10009.jpg" alt="" class="img-fluid" />
-                        </div>
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10010.jpg" alt="" class="img-fluid" />
-                        </div>
                     </div>
                 </div>
             </div>
@@ -311,5 +118,27 @@
     </div>
 
     @Scripts.Render("~/bundles/jquery")
+    <script>    
+        var app = new Vue({
+            el: '#app',
+            data: {
+                txtDeckName : "",
+                cardDetail: {},
+                decks: [],
+            },
+            methods: {
+                createNewDeck: function () {
+                    this.decks.push(new Deck(this.txtDeckName))
+                }
+            }
+        })
+
+        //類別定義
+        class Deck {
+            constructor(name) {
+                this.name = name
+            }
+        }
+    </script>
 </body>
 </html>
