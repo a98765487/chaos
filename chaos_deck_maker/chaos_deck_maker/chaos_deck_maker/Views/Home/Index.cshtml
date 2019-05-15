@@ -9,7 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>chaos組牌器</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="~/Content/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
     <style>
         * {
             /*border: 1px solid black*/
@@ -40,7 +41,7 @@
             }
 
         .extra-deck-area {
-            width:100%;
+            width: 100%;
             position: absolute;
             bottom: 10%;
         }
@@ -70,10 +71,10 @@
                 <div class="player-operate-area my-4">
                     <div class="form-group">
                         <label for="ddl-desk">選擇牌組：</label>
-                        <select id="ddl-desk">
-                            <option value="deck.name" v-for="deck in decks">{{deck.name}}</option>
+                        <select id="ddl-desk" v-model="currentDeck.sid" v-on:change="changeCurrentDeck">
+                            <option :value="deck.sid" v-for="deck in decks">{{deck.name}}</option>
                         </select>
-                        <input type="button" value="刪除" class="btn btn-dark" />
+                        <input type="button" value="刪除" class="btn btn-dark" v-on:click="deleteDeck" />
                     </div>
                     <div class="form-group">
                         <label for="txt-deck">新建牌組：</label>
@@ -104,12 +105,15 @@
             </div>
             <div class="col-2">
                 <div class="form-group pt-3">
-                    <label for="card-search"><input type="text" class="form-control" id="card-search" placeholder="請輸入關鍵字"></label>
+                    <label for="card-search"><input type="text" class="form-control" id="card-search" placeholder="請輸入關鍵字" v-model="txtSearch" v-on:keyup="searchCardPool(1)"></label>
                 </div>
                 <div class="card-search-area">
                     <div class="card-list">
-                        <div class="search-img mt-2 mr-2">
-                            <img src="~/Images/2angel1.0/10002.jpg" alt="" class="img-fluid" />
+                        <div class="search-img mt-2 mr-2" v-for="item in cardPool">
+                            <img :src="'/Images/' + item.IMG_FOLDER + '/' + item.IMG_NAME" alt="" class="img-fluid" />
+                        </div>
+                        <div class="my-2">
+                            <input type="button" value="更多" class="btn btn-dark d-block mx-auto" v-if="moreBtnShow" v-on:click="searchCardPool(2)" />
                         </div>
                     </div>
                 </div>
@@ -122,20 +126,85 @@
         var app = new Vue({
             el: '#app',
             data: {
-                txtDeckName : "",
+                txtDeckName: "",
+                txtSearch:"",
                 cardDetail: {},
+                currentDeck: {},
+                selectedDeck: "",
                 decks: [],
+                page: 1,
+                cardPool: [],
+                moreBtnShow: false,
             },
             methods: {
                 createNewDeck: function () {
-                    this.decks.push(new Deck(this.txtDeckName))
-                }
-            }
+                    let _this =this
+                    if (_this.txtDeckName) {
+                        _this.currentDeck = new Deck(_this.generateSId(),_this.txtDeckName)
+                        _this.decks.push(_this.currentDeck)
+                    }
+                },
+                deleteDeck: function () {
+                    let _this = this
+                    let index = this.decks.findIndex(x => x.sid == _this.currentDeck.sid);
+                    if (index > -1)
+                    this.decks.splice(index,1)
+                },
+                changeCurrentDeck: function () {
+                    let _this = this
+                    _this.currentDeck = this.decks.filter(x => x.sid == sid) 
+                },
+                generateSId: function () {
+                    return Math.floor((1 + Math.random()) * 0x1000000000).toString("16") + Math.floor((1 + Math.random()) * 0x1000000000).toString("16")
+                },
+                // type : 1 = 基本搜尋 , 2 = 更多搜尋
+                searchCardPool: function (type) {
+                    let _this = this
+                    if (_this.txtSearch) {
+                        if (type == 1) {
+                            _this.page = 1
+                        }
+                        else {
+                            _this.page++
+                        }
+                        var bodyFormData = new FormData();
+                        bodyFormData.set('keyword', _this.txtSearch);
+                        bodyFormData.set('page', _this.page);
+                        axios({
+                            url: '/home/search',
+                            method: 'post',
+                            data: bodyFormData,
+                        })
+                            .then(function (result) {
+                                if (result.data.Success) {
+                                    let returnCardPool = JSON.parse(result.data.CardPool)
+                                    if (returnCardPool.length == 10) {
+                                        _this.moreBtnShow = true
+                                    }
+                                    else {
+                                        _this.moreBtnShow = false
+                                    }
+                                    _this.cardPool = [..._this.cardPool, ...returnCardPool]
+                                }
+                                else {
+                                    _this.cardPool = []
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    }
+                    else {
+                        _this.moreBtnShow = false
+                    }
+                },
+            },
         })
 
         //類別定義
         class Deck {
-            constructor(name) {
+            constructor(sid, name) {
+                this.sid = sid
                 this.name = name
             }
         }

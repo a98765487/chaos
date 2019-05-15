@@ -85,3 +85,7 @@ D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\obj\Debu
 D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\obj\Debug\chaos_deck_maker.csproj.CopyComplete
 D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\obj\Debug\chaos_deck_maker.dll
 D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\obj\Debug\chaos_deck_maker.pdb
+D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\bin\Dapper.dll
+D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\bin\Drapper.dll
+D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\bin\Drapper.Validation.dll
+D:\workstation\chaos\chaos_deck_maker\chaos_deck_maker\chaos_deck_maker\bin\Dapper.xml
