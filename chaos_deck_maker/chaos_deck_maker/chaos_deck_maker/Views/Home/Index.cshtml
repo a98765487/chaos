@@ -33,7 +33,7 @@
         }
 
         .main-area-card-img, .extra-area-card-img {
-            width: 9%;
+            width: 10%;
             display: inline-block;
         }
 
@@ -44,7 +44,13 @@
         .extra-deck-area {
             width: 100%;
             position: absolute;
-            bottom: 10%;
+            bottom: 0%;
+        }
+        .main-deck-area {
+            min-height:500px;
+        }
+        .extra-deck-area {
+            min-height: 150px;
         }
     </style>
 </head>
@@ -71,8 +77,8 @@
             <div class="col-7">
                 <div class="player-operate-area my-4">
                     <div class="form-group">
-                        <label for="ddl-desk">選擇牌組：</label>
-                        <select id="ddl-desk" v-model="currentDeck.sid" v-on:change="changeCurrentDeck">
+                        <label for="ddl-deck">選擇牌組：</label>
+                        <select id="ddl-deck" v-model="ddlDeckVal" v-on:change="changeCurrentDeck">
                             <option :value="deck.sid" v-for="deck in decks">{{deck.name}}</option>
                         </select>
                         <input type="button" value="刪除" class="btn btn-dark" v-on:click="deleteDeck" />
@@ -81,24 +87,24 @@
                         <label for="txt-deck">新建牌組：</label>
                         <input type="text" id="txt-deck" v-model="txtDeckName"/>
                         <input type="button" value="新增" class="btn btn-dark" v-on:click="createNewDeck" />
-                        <input type="button" value="輸出" class="btn btn-dark" />
-                        <input type="button" value="輸入" class="btn btn-dark" />
+                        <input type="button" value="輸出" class="btn btn-dark" v-on:click="exportDeck" />
+                        <input type="button" value="存檔" class="btn btn-dark" v-on:click="saveDeck"/>
                     </div>
                 </div>
                 <div class="deck-area">
-                    <div class="main-deck-area">
+                    <div class="main-deck-area" v-on:drop='drop($event,1)' v-on:dragover='allowDrop($event)'>
                         <h4 class="text-center">Main Deck</h4>
-                        <div v-on:drop='drop($event)' v-on:dragover='allowDrop($event)'>
+                        <div>
                             <div class="main-area-card-img" v-for="item in currentDeck.mainDeck">
-                                <img src="'/Images/' + cardDetail.IMG_FOLDER + '/' + cardDetail.IMG_NAME" alt="" />
+                                <img :src="'/Images/' + item.IMG_FOLDER + '/' + item.IMG_NAME" alt="" draggable="false" v-on:mouseover="showCardDetail(item)" v-on:click="deleteCard(item.SID,1)" />
                             </div>
                         </div>
                     </div>
-                    <div class="extra-deck-area">
+                    <div class="extra-deck-area" v-on:drop='drop($event,2)' v-on:dragover='allowDrop($event)'>
                         <h4 class="text-center">Extra Deck</h4>
-                        <div v-on:drop='drop($event)' v-on:dragover='allowDrop($event)'>
+                        <div>
                             <div class="extra-area-card-img" v-for="item in currentDeck.extraDeck">
-                                <img src="'/Images/' + cardDetail.IMG_FOLDER + '/' + cardDetail.IMG_NAME" alt="" />
+                                <img :src="'/Images/' + item.IMG_FOLDER + '/' + item.IMG_NAME" alt="" draggable="false" v-on:mouseover="showCardDetail(item)" v-on:click="deleteCard(item.SID,2)" />
                             </div>
                         </div>
                     </div>
@@ -136,7 +142,18 @@
                 page: 1,
                 cardPool: [],
                 moreBtnShow: false,
-                draggedCard: {}
+                draggedCard: {},
+                ddlDeckVal : ""
+            },
+            mounted: function () {
+                let _this = this
+                if (localStorage.getItem('decks')) {
+                    _this.decks = JSON.parse(localStorage.getItem('decks'))
+                }
+                if (_this.decks.length > 0) {
+                    _this.currentDeck = _this.decks[0]
+                    _this.ddlDeckVal = _this.decks[0].sid
+                }
             },
             methods: {
                 createNewDeck: function () {
@@ -144,17 +161,36 @@
                     if (_this.txtDeckName) {
                         _this.currentDeck = new Deck(_this.generateSId(),_this.txtDeckName)
                         _this.decks.push(_this.currentDeck)
+                        _this.ddlDeckVal = _this.currentDeck.sid
                     }
                 },
                 deleteDeck: function () {
                     let _this = this
-                    let index = this.decks.findIndex(x => x.sid == _this.currentDeck.sid);
+                    let index = _this.decks.findIndex(x => x.sid == _this.currentDeck.sid);
                     if (index > -1)
-                    this.decks.splice(index,1)
+                    _this.decks.splice(index,1)
+                },
+                // type : 1 = 主牌組 , 2 = 額外牌組
+                deleteCard: function (sid ,type) {
+                    let _this = this
+                    if (type == 1)
+                    {
+                        let index = _this.currentDeck.mainDeck.findIndex(x => x.SID == sid);
+                        if (index > -1) {
+                            this.currentDeck.mainDeck.splice(index, 1)
+                        }
+                    }
+                    else
+                    {
+                        let index = _this.currentDeck.extraDeck.findIndex(x => x.SID == sid);
+                        if (index > -1) {
+                            this.currentDeck.extraDeck.splice(index, 1)
+                        }
+                    }
                 },
                 changeCurrentDeck: function () {
                     let _this = this
-                    _this.currentDeck = this.decks.filter(x => x.sid == sid) 
+                    _this.currentDeck = this.decks.filter(x => x.sid == _this.ddlDeckVal) [0]
                 },
                 generateSId: function () {
                     return Math.floor((1 + Math.random()) * 0x1000000000).toString("16") + Math.floor((1 + Math.random()) * 0x1000000000).toString("16")
@@ -207,21 +243,68 @@
                 },
                 showCardDetail: function (item) {
                     _this = this
-                    _this.cardDetail = item
+                    let tempCard = item
+                    _this.cardDetail = new Card(tempCard.SID, tempCard.CARD_NUMBER, tempCard.TYPE, tempCard.ATTR, tempCard.ATK, tempCard.DEF, tempCard.ATK_COR, tempCard.DEF_COR, tempCard.SERIES, tempCard.EFFECT, tempCard.LINE, tempCard.IMG_FOLDER, tempCard.IMG_NAME, tempCard.NAME, tempCard.RARITY)
                 },
                 drag: function (event, item) {
                     var _this = this
                     _this.draggedCard = item
                 },
-                drop: function (event) {
+                // type : 1 = 主牌組 , 2 = 額外牌組
+                drop: function (event,type) {
                     event.preventDefault();
-                    var _this = this
-                    _this.currentDeck.push(_this.draggedCard)
+                    _this = this
+                    if (_this.decks.length == 0) {
+                        alert("請新增至少一個牌組！")
+                    }
+                    let _this = this
+                    let tempCard = _this.draggedCard
+                    if (type == 1) {
+                        _this.currentDeck.mainDeck.push(new Card(tempCard.SID, tempCard.CARD_NUMBER, tempCard.TYPE, tempCard.ATTR, tempCard.ATK, tempCard.DEF, tempCard.ATK_COR, tempCard.DEF_COR, tempCard.SERIES, tempCard.EFFECT, tempCard.LINE, tempCard.IMG_FOLDER, tempCard.IMG_NAME, tempCard.NAME, tempCard.RARITY))
+                    }
+                    else {
+                        _this.currentDeck.extraDeck.push(new Card(tempCard.SID, tempCard.CARD_NUMBER, tempCard.TYPE, tempCard.ATTR, tempCard.ATK, tempCard.DEF, tempCard.ATK_COR, tempCard.DEF_COR, tempCard.SERIES, tempCard.EFFECT, tempCard.LINE, tempCard.IMG_FOLDER, tempCard.IMG_NAME, tempCard.NAME, tempCard.RARITY))
+                    }
                     
                 },
                 allowDrop: function (event) {
                     event.preventDefault();
                 },
+                saveDeck: function () {
+                    localStorage.setItem('decks', JSON.stringify(_this.decks))
+                },
+                exportDeck: function () {
+                    let _this = this
+                    if (_this.currentDeck) {
+                        let bodyFormData = new FormData();
+                        var exportData = {}
+                        exportData.MainDeck = _this.currentDeck.mainDeck.map(x => x.SID)
+                        exportData.ExtraDeck = _this.currentDeck.extraDeck.map(x => x.SID)
+                        bodyFormData.set('decks', JSON.stringify(exportData));
+                        axios({
+                            url: '/home/export',
+                            method: 'post',
+                            data: bodyFormData,
+                        })
+                            .then(function (result) {
+                                if (result.data.Success && result.data.Path) {
+                                    let eleLink = document.createElement('a');
+                                    eleLink.download = result.data.Path;
+                                    eleLink.href = result.data.Path;
+                                    eleLink.style.display = 'none';
+                                    document.body.appendChild(eleLink);
+                                    eleLink.click();
+                                    document.body.removeChild(eleLink);
+                                }
+                                else {
+                                    console.log("匯出牌組失敗")
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    }
+                }
             },
         })
 
@@ -232,6 +315,25 @@
                 this.name = name
                 this.mainDeck = []
                 this.extraDeck = []
+            }
+        }
+        class Card {
+            constructor(sid, cardnum,type,attr,atk,def,atkCor,defCor,series,effect,line,imgFolder,imgName,name,rarity) {
+                this.SID = sid
+                this.CARD_NUMBER = cardnum
+                this.TYPE = type
+                this.ATTR = attr
+                this.ATK = atk
+                this.DEF = def
+                this.ATK_COR = atkCor
+                this.DEF_COR = defCor
+                this.SERIES = series
+                this.EFFECT = effect
+                this.LINE = line
+                this.IMG_FOLDER = imgFolder
+                this.IMG_NAME = imgName
+                this.NAME = name
+                this.RARITY = rarity
             }
         }
     </script>
