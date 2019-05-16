@@ -18,7 +18,8 @@
         }
 
         .img-preview img {
-            width: 100%
+            width: 100%;
+            min-height:200px;
         }
 
         .card-list {
@@ -52,16 +53,16 @@
         <div class="row">
             <div class="col-3">
                 <div class="img-preview pt-3">
-                    <img src="~/Images/2angel1.0/10001.jpg" alt="" />
+                    <img :src="'/Images/' + cardDetail.IMG_FOLDER + '/' + cardDetail.IMG_NAME" alt="" />
                 </div>
                 <div class="detail-card-info">
-                    <div id="detail-card-name" class="text-center">卡片名稱</div>
+                    <div id="detail-card-name" class="text-center">{{cardDetail.NAME}}</div>
                     <table class="table">
-                        <tr><td>屬性</td><td>火</td><td>種類</td><td>Set</td></tr>
-                        <tr><td>攻擊</td><td>4</td><td>耐久</td><td>3</td></tr>
+                        <tr><td>屬性</td><td>{{cardDetail.ATTR}}</td><td>種類</td><td>{{cardDetail.TYPE}}</td></tr>
+                        <tr><td>攻擊</td><td>{{cardDetail.ATK}}</td><td>耐久</td><td>{{cardDetail.DEF}}</td></tr>
                         <tr>
                             <td class="value effects" colspan="4">
-                                我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，我是效果文阿兄弟，
+                                {{cardDetail.EFFECT}}
                             </td>
                         </tr>
                     </table>
@@ -87,17 +88,17 @@
                 <div class="deck-area">
                     <div class="main-deck-area">
                         <h4 class="text-center">Main Deck</h4>
-                        <div>
-                            <div class="main-area-card-img">
-                                <img src="~/Images/2angel1.0/10002.jpg" alt="" />
+                        <div v-on:drop='drop($event)' v-on:dragover='allowDrop($event)'>
+                            <div class="main-area-card-img" v-for="item in currentDeck.mainDeck">
+                                <img src="'/Images/' + cardDetail.IMG_FOLDER + '/' + cardDetail.IMG_NAME" alt="" />
                             </div>
                         </div>
                     </div>
                     <div class="extra-deck-area">
                         <h4 class="text-center">Extra Deck</h4>
-                        <div>
-                            <div class="extra-area-card-img">
-                                <img src="~/Images/2angel1.0/10002.jpg" alt="" />
+                        <div v-on:drop='drop($event)' v-on:dragover='allowDrop($event)'>
+                            <div class="extra-area-card-img" v-for="item in currentDeck.extraDeck">
+                                <img src="'/Images/' + cardDetail.IMG_FOLDER + '/' + cardDetail.IMG_NAME" alt="" />
                             </div>
                         </div>
                     </div>
@@ -109,8 +110,8 @@
                 </div>
                 <div class="card-search-area">
                     <div class="card-list">
-                        <div class="search-img mt-2 mr-2" v-for="item in cardPool">
-                            <img :src="'/Images/' + item.IMG_FOLDER + '/' + item.IMG_NAME" alt="" class="img-fluid" />
+                        <div class="search-img mt-2 mr-2" v-for="item in cardPool" v-on:mouseover="showCardDetail(item)">
+                            <img :src="'/Images/' + item.IMG_FOLDER + '/' + item.IMG_NAME" alt="" class="img-fluid" draggable="true" v-on:dragstart='drag($event,item)' />
                         </div>
                         <div class="my-2">
                             <input type="button" value="更多" class="btn btn-dark d-block mx-auto" v-if="moreBtnShow" v-on:click="searchCardPool(2)" />
@@ -135,6 +136,7 @@
                 page: 1,
                 cardPool: [],
                 moreBtnShow: false,
+                draggedCard: {}
             },
             methods: {
                 createNewDeck: function () {
@@ -184,7 +186,12 @@
                                     else {
                                         _this.moreBtnShow = false
                                     }
-                                    _this.cardPool = [..._this.cardPool, ...returnCardPool]
+                                    if (type == 1) {
+                                        _this.cardPool = returnCardPool
+                                    }
+                                    else {
+                                        _this.cardPool = [..._this.cardPool, ...returnCardPool]
+                                    }
                                 }
                                 else {
                                     _this.cardPool = []
@@ -198,6 +205,23 @@
                         _this.moreBtnShow = false
                     }
                 },
+                showCardDetail: function (item) {
+                    _this = this
+                    _this.cardDetail = item
+                },
+                drag: function (event, item) {
+                    var _this = this
+                    _this.draggedCard = item
+                },
+                drop: function (event) {
+                    event.preventDefault();
+                    var _this = this
+                    _this.currentDeck.push(_this.draggedCard)
+                    
+                },
+                allowDrop: function (event) {
+                    event.preventDefault();
+                },
             },
         })
 
@@ -206,6 +230,8 @@
             constructor(sid, name) {
                 this.sid = sid
                 this.name = name
+                this.mainDeck = []
+                this.extraDeck = []
             }
         }
     </script>
